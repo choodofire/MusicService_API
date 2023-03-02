@@ -7,6 +7,6 @@ export class CreateAlbumDto {
     @IsString({message: "Должно быть строкой"})
     readonly title: string;
 
-    @ApiProperty({example: 'Идентификатор музыканта', description: 'Идентификатор создателя альбома'})
+    @ApiProperty({example: 3, description: 'Идентификатор создателя альбома'})
     readonly musicianId: number;
 }

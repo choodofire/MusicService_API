@@ -7,11 +7,17 @@ import {AddRoleDto} from "./dto/add-role.dto";
 import {BanUserDto} from "./dto/ban-user.dto";
 import {Ban} from "./bans.model";
 import {UnbanUserDto} from "./dto/unban-user.dto";
+import { AddSubscriptionDto } from "./dto/add-subscription.dto";
+import { AddLikesDto } from "./dto/add-likes.dto";
+import { Musician } from "../musicians/musicians.model";
+import { Song } from "../songs/songs.model";
 
 @Injectable()
 export class UsersService {
     constructor(@InjectModel(User) private userRepository: typeof User,
                 @InjectModel(Ban) private banRepository: typeof Ban,
+                @InjectModel(Musician) private musicianRepository: typeof Musician,
+                @InjectModel(Song) private songRepository: typeof Song,
                 private roleService: RolesService) {}
 
     async createUser(dto: CreateUserDto) {
@@ -43,10 +49,10 @@ export class UsersService {
 
     async addRole(dto: AddRoleDto) {
         const user = await this.userRepository.findByPk(dto.userId);
-        const role = await this.roleService.getRoleByValue(dto.value)
+        const role = await this.roleService.getRoleByValue(dto.value);
         if (user && role) {
-            await user.$add('role', role.id)
-            return dto
+            await user.$add('role', role.id);
+            return dto;
         }
         throw new HttpException("Пользователь или роль не найдены", HttpStatus.NOT_FOUND)
     }
@@ -76,5 +82,25 @@ export class UsersService {
     async getOneUserById(value: number) {
         const user = await this.userRepository.findOne({where: {id: value}, include: {all: true}});
         return user;
+    }
+
+    async createSubscription(dto: AddSubscriptionDto) {
+        const user = await this.userRepository.findByPk(dto.userId);
+        const musician = await this.musicianRepository.findByPk(dto.musicianId);
+        if (user && musician) {
+            await user.$add('musician', musician.id);
+            return dto;
+        }
+        throw new HttpException("Пользователь или роль не найдены", HttpStatus.NOT_FOUND)
+    }
+
+    async createLikes(dto: AddLikesDto) {
+        const user = await this.userRepository.findByPk(dto.userId);
+        const song = await this.songRepository.findByPk(dto.songId);
+        if (user && song) {
+            await user.$add('song', song.id);
+            return dto;
+        }
+        throw new HttpException("Пользователь или роль не найдены", HttpStatus.NOT_FOUND)
     }
 }

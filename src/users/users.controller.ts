@@ -11,6 +11,8 @@ import {BanUserDto} from "./dto/ban-user.dto";
 import {ValidationPipe} from "../pipes/validation.pipe";
 import {UnbanUserDto} from "./dto/unban-user.dto";
 import {Role} from "../roles/roles.model";
+import { AddLikesDto } from "./dto/add-likes.dto";
+import { AddSubscriptionDto } from "./dto/add-subscription.dto";
 
 @ApiTags('Пользователи')
 @Controller('users')
@@ -43,6 +45,24 @@ export class UsersController {
     @Post('/role')
     addRole(@Body() dto: AddRoleDto) {
         return this.usersService.addRole(dto);
+    }
+
+    @ApiOperation({summary: 'Оформить подписку на музыканта'})
+    @ApiResponse({status: 200})
+    @Roles("USER")
+    @UseGuards(RolesGuard)
+    @Post('/compose/subscription')
+    createSubscription(@Body() dto: AddSubscriptionDto) {
+        return this.usersService.createSubscription(dto);
+    }
+
+    @ApiOperation({summary: 'Добавить песню в избранное'})
+    @ApiResponse({status: 200})
+    @Roles("USER")
+    @UseGuards(RolesGuard)
+    @Post('/compose/likes')
+    createLikes(@Body() dto: AddLikesDto) {
+        return this.usersService.createLikes(dto);
     }
 
     @ApiOperation({summary: 'Забанить пользователя'})

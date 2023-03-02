@@ -1,8 +1,8 @@
 import {BelongsTo, BelongsToMany, Column, DataType, ForeignKey, Model, Table} from "sequelize-typescript";
-import {ApiProperty} from "@nestjs/swagger";
-import {Role} from "../roles/roles.model";
-import {UserRoles} from "../roles/user-roles.model";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {User} from "../users/users.model";
+import { Song } from "../songs/songs.model";
+import { PlaylistSongs } from "./playlist-songs.model";
 
 interface PlaylistCreationAttrs {
     title: string;
@@ -20,7 +20,7 @@ export class Playlist extends Model<Playlist, PlaylistCreationAttrs> {
     @Column({type: DataType.STRING, unique: true, allowNull: false})
     title: string;
 
-    @ApiProperty({example: 'Лучший плейлист', description: 'Описание плейлиста'})
+    @ApiPropertyOptional({example: 'Лучший плейлист', description: 'Описание плейлиста'})
     @Column({type: DataType.STRING, allowNull: false, defaultValue: "Нет описания"})
     description: string;
 
@@ -33,4 +33,7 @@ export class Playlist extends Model<Playlist, PlaylistCreationAttrs> {
 
     @BelongsTo(() => User)
     author: User;
+
+    @BelongsToMany(() => Song, () => PlaylistSongs)
+    songs: Song[];
 }

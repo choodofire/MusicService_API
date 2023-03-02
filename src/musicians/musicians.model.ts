@@ -1,8 +1,10 @@
-import {BelongsTo, Column, DataType, ForeignKey, HasMany, Model, Table} from "sequelize-typescript";
+import { BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
 import {ApiProperty} from "@nestjs/swagger";
 import {User} from "../users/users.model";
 import {Album} from "../albums/albums.model";
 import {Song} from "../songs/songs.model";
+import { Likes } from "../users/likes.model";
+import { Subscriptions } from "../users/subscription.model";
 
 interface MusicianCreationAttrs {
     name: string;
@@ -40,4 +42,7 @@ export class Musician extends Model<Musician, MusicianCreationAttrs> {
 
     @BelongsTo(() => User)
     user: User;
+
+    @BelongsToMany(() => User, () => Subscriptions)
+    users: User[]
 }

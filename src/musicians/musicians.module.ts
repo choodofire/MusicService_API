@@ -9,12 +9,13 @@ import {AuthModule} from "../auth/auth.module";
 import {Album} from "../albums/albums.model";
 import {RolesModule} from "../roles/roles.module";
 import {Song} from "../songs/songs.model";
+import { Subscriptions } from "../users/subscription.model";
 
 @Module({
   providers: [MusiciansService],
   controllers: [MusiciansController],
   imports: [
-    SequelizeModule.forFeature([User, Musician, Album, Song]),
+    SequelizeModule.forFeature([User, Musician, Album, Song, Subscriptions]),
       RolesModule,
     FilesModule,
       AuthModule

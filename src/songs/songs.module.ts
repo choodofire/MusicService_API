@@ -8,12 +8,15 @@ import {Song} from "./songs.model";
 import {RolesModule} from "../roles/roles.module";
 import {AuthModule} from "../auth/auth.module";
 import {FilesModule} from "../files/files.module";
+import { Playlist } from "../playlists/playlists.model";
+import { PlaylistSongs } from "../playlists/playlist-songs.model";
+import { Likes } from "../users/likes.model";
 
 @Module({
     providers: [SongsService],
     controllers: [SongsController],
     imports: [
-        SequelizeModule.forFeature([Musician, Album, Song]),
+        SequelizeModule.forFeature([Musician, Album, Song, Playlist, PlaylistSongs, Likes]),
         RolesModule,
         AuthModule,
         FilesModule

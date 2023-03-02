@@ -10,12 +10,15 @@ import {AuthModule} from "../auth/auth.module";
 import {Playlist} from "../playlists/playlists.model";
 import {Musician} from "../musicians/musicians.model";
 import {Ban} from "./bans.model";
+import { Subscriptions } from "./subscription.model";
+import { Likes } from "./likes.model";
+import { Song } from "../songs/songs.model";
 
 @Module({
   controllers: [UsersController],
   providers: [UsersService],
   imports: [
-      SequelizeModule.forFeature([User, Role, UserRoles, Playlist, Musician, Ban]),
+      SequelizeModule.forFeature([User, Role, UserRoles, Playlist, Musician, Ban, Subscriptions, Likes, Song]),
       RolesModule,
       forwardRef(() => AuthModule)
   ],

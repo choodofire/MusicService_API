@@ -7,9 +7,9 @@ export class CreateSongDto {
     @IsString({message: "Должно быть строкой"})
     readonly title: string;
 
-    @ApiProperty({example: 'Идентификатор плейлиста', description: 'Идентификатор принадлежности к альбому'})
+    @ApiProperty({example: 3, description: 'Идентификатор принадлежности к альбому'})
     readonly playlistId: number;
 
-    @ApiProperty({example: 'Идентификатор музыканта', description: 'Идентификатор создателя альбома'})
+    @ApiProperty({example: 6, description: 'Идентификатор создателя альбома'})
     readonly musicianId: number;
 }
