@@ -22,6 +22,7 @@ import {Song} from "./songs/songs.model";
 import { PlaylistSongs } from "./playlists/playlist-songs.model";
 import { Subscriptions } from "./users/subscription.model";
 import { Likes } from "./users/likes.model";
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
     controllers: [],
@@ -38,11 +39,25 @@ import { Likes } from "./users/likes.model";
             host: process.env.POSTGRES_HOST,
             port: Number(process.env.POSTGRES_PORT),
             username: process.env.POSTGRES_USER,
-            password: process.env.POSTGRES_PASSWORD,
+            password: String(process.env.POSTGRES_PASSWORD),
             database: process.env.POSTGRES_DB,
-            models: [User, Ban, Role, UserRoles, Playlist, Musician, Album, Song, PlaylistSongs, Subscriptions, Likes],
+            models: [
+                User,
+                Ban,
+                Role,
+                UserRoles,
+                Playlist,
+                Musician,
+                Album,
+                Song,
+                PlaylistSongs,
+                Subscriptions,
+                Likes
+            ],
             autoLoadModels: true,
+            synchronize: true,
         }),
+        AppModule,
         UsersModule,
         RolesModule,
         AuthModule,
@@ -51,8 +66,8 @@ import { Likes } from "./users/likes.model";
         MusiciansModule,
         AlbumsModule,
         SongsModule,
+        PaymentModule,
     ]
 })
-
 
 export class AppModule {}

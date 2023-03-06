@@ -6,7 +6,4 @@ export class AddSubscriptionDto {
   @IsNumber({},{message: "Должно быть числом"})
   readonly musicianId: number;
 
-  @ApiProperty({example: '4', description: 'Идентификатор пользователя'})
-  @IsNumber({},{message: "Должно быть числом"})
-  readonly userId: number;
 }

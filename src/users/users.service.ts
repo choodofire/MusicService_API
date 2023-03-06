@@ -42,9 +42,14 @@ export class UsersService {
         return users;
     }
 
+    async getOneUserById(value: number) {
+        const user = await this.userRepository.findOne({where: {id: value}, include: {all: true}});
+        return user;
+    }
+
     async getUserByEmail(email: string) {
-        const user = await this.userRepository.findOne({where: {email}, include: {all: true}})
-        return user
+        const user = await this.userRepository.findOne({where: {email}, include: {all: true}});
+        return user;
     }
 
     async addRole(dto: AddRoleDto) {
@@ -54,18 +59,18 @@ export class UsersService {
             await user.$add('role', role.id);
             return dto;
         }
-        throw new HttpException("Пользователь или роль не найдены", HttpStatus.NOT_FOUND)
+        throw new HttpException("Пользователь или роль не найдены", HttpStatus.NOT_FOUND);
     }
 
     async ban(dto: BanUserDto) {
         const user = await this.banRepository.findOne({where: {userId: dto.userId}});
-        if (!user.banned) {
+        if (!user?.banned) {
             user.banned = true
             user.banReason = dto.banReason
             await user.save()
             return user
         }
-        throw new HttpException("Пользователь уже забанен", HttpStatus.BAD_REQUEST)
+        throw new HttpException("Пользователь уже забанен", HttpStatus.BAD_REQUEST);
     }
 
     async unban(dto: UnbanUserDto) {
@@ -76,22 +81,17 @@ export class UsersService {
             await user.save()
             return user
         }
-        throw new HttpException("Пользователь не забанен", HttpStatus.BAD_REQUEST)
+        throw new HttpException("Пользователь не забанен", HttpStatus.BAD_REQUEST);
     }
 
-    async getOneUserById(value: number) {
-        const user = await this.userRepository.findOne({where: {id: value}, include: {all: true}});
-        return user;
-    }
-
-    async createSubscription(dto: AddSubscriptionDto) {
-        const user = await this.userRepository.findByPk(dto.userId);
+    async createSubscription(dto: AddSubscriptionDto, userId: number) {
+        const user = await this.userRepository.findByPk(userId);
         const musician = await this.musicianRepository.findByPk(dto.musicianId);
         if (user && musician) {
             await user.$add('musician', musician.id);
             return dto;
         }
-        throw new HttpException("Пользователь или роль не найдены", HttpStatus.NOT_FOUND)
+        throw new HttpException("Пользователь или роль не найдены", HttpStatus.NOT_FOUND);
     }
 
     async createLikes(dto: AddLikesDto) {
@@ -101,6 +101,16 @@ export class UsersService {
             await user.$add('song', song.id);
             return dto;
         }
-        throw new HttpException("Пользователь или роль не найдены", HttpStatus.NOT_FOUND)
+        throw new HttpException("Пользователь или роль не найдены", HttpStatus.NOT_FOUND);
+    }
+
+    async editUserById(value: number, body: Object) {
+        let user = await this.userRepository.findByPk(value);
+        if (user) {
+            const updatedUser = Object.assign(user, body, {password: user.password});
+            user = updatedUser;
+            return await user.save();
+        }
+        throw new HttpException("Пользователь не найдены", HttpStatus.NOT_FOUND);
     }
 }

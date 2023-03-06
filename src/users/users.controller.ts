@@ -1,4 +1,17 @@
-import {Body, Controller, Get, Injectable, Param, Post, Query, UseGuards, UsePipes} from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Injectable,
+    Param,
+    Post,
+    Put,
+    Query,
+    Req,
+    Res,
+    UseGuards,
+    UsePipes
+} from "@nestjs/common";
 import {CreateUserDto} from "./dto/create-user.dto";
 import {UsersService} from "./users.service";
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
@@ -10,9 +23,10 @@ import {AddRoleDto} from "./dto/add-role.dto";
 import {BanUserDto} from "./dto/ban-user.dto";
 import {ValidationPipe} from "../pipes/validation.pipe";
 import {UnbanUserDto} from "./dto/unban-user.dto";
-import {Role} from "../roles/roles.model";
 import { AddLikesDto } from "./dto/add-likes.dto";
 import { AddSubscriptionDto } from "./dto/add-subscription.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
+
 
 @ApiTags('Пользователи')
 @Controller('users')
@@ -38,6 +52,16 @@ export class UsersController {
         return this.usersService.getOneUserById(value);
     }
 
+    @ApiOperation({summary: 'Редактирование данных пользователя'})
+    @ApiResponse({status: 200, type: User})
+    @Roles("USER")
+    @UseGuards(RolesGuard)
+    @Put('/:value')
+    editOneById(@Param('value') value: number,
+                @Body() body: UpdateUserDto) {
+        return this.usersService.editUserById(value, body)
+    }
+
     @ApiOperation({summary: 'Выдача ролей пользователям'})
     @ApiResponse({status: 200, type: AddRoleDto})
     @Roles("ADMIN")
@@ -53,7 +77,7 @@ export class UsersController {
     @UseGuards(RolesGuard)
     @Post('/compose/subscription')
     createSubscription(@Body() dto: AddSubscriptionDto) {
-        return this.usersService.createSubscription(dto);
+        return this.usersService.createSubscription(dto, 10);
     }
 
     @ApiOperation({summary: 'Добавить песню в избранное'})
