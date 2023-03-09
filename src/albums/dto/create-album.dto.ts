@@ -1,5 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
-import {IsString} from "class-validator";
+import { IsOptional, IsString } from "class-validator";
 
 
 export class CreateAlbumDto {
@@ -9,4 +9,8 @@ export class CreateAlbumDto {
 
     @ApiProperty({example: 3, description: 'Идентификатор создателя альбома'})
     readonly musicianId: number;
+
+    @ApiProperty({example: 'albums_avatars/file1.jpg', description: 'Путь к файлу'})
+    @IsOptional()
+    readonly image: string;
 }

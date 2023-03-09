@@ -1,5 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
-import {IsString} from "class-validator";
+import { IsOptional, IsString } from "class-validator";
 
 
 export class CreateSongDto {
@@ -8,8 +8,12 @@ export class CreateSongDto {
     readonly title: string;
 
     @ApiProperty({example: 3, description: 'Идентификатор принадлежности к альбому'})
-    readonly playlistId: number;
+    readonly albumId: number;
 
     @ApiProperty({example: 6, description: 'Идентификатор создателя альбома'})
     readonly musicianId: number;
+
+    @ApiProperty({example: 'audio/file1.jpg', description: 'Путь к файлу'})
+    @IsOptional()
+    readonly audio: string;
 }

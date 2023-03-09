@@ -9,7 +9,7 @@ import {AuthModule} from "../auth/auth.module";
 import {Album} from "../albums/albums.model";
 import {RolesModule} from "../roles/roles.module";
 import {Song} from "../songs/songs.model";
-import { Subscriptions } from "../users/subscription.model";
+import { Subscriptions } from "../follow/subscription.model";
 
 @Module({
   providers: [MusiciansService],

@@ -1,4 +1,4 @@
-import {IsNumber, IsString, Length} from "class-validator";
+import { IsNumber, IsOptional, IsString, Length } from "class-validator";
 import {ApiProperty} from "@nestjs/swagger";
 
 export class CreateMusicianDto {
@@ -14,4 +14,8 @@ export class CreateMusicianDto {
 
     @ApiProperty({example: 'Идентификатор пользователя', description: 'Идентификатор создателя профиля музыканта'})
     readonly userId: number;
+
+    @ApiProperty({example: 'musicians_avatars/file1.jpg', description: 'Путь к файлу'})
+    @IsOptional()
+    readonly image: string;
 }

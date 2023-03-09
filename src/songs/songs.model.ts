@@ -6,7 +6,7 @@ import { User } from "../users/users.model";
 import { UserRoles } from "../roles/user-roles.model";
 import { Playlist } from "../playlists/playlists.model";
 import { PlaylistSongs } from "../playlists/playlist-songs.model";
-import { Likes } from "../users/likes.model";
+import { Likes } from "../follow/likes.model";
 
 interface SongCreationAttrs {
     title: string;

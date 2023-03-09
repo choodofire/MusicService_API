@@ -3,8 +3,8 @@ import {ApiProperty} from "@nestjs/swagger";
 import {User} from "../users/users.model";
 import {Album} from "../albums/albums.model";
 import {Song} from "../songs/songs.model";
-import { Likes } from "../users/likes.model";
-import { Subscriptions } from "../users/subscription.model";
+import { Subscriptions } from "../follow/subscription.model";
+
 
 interface MusicianCreationAttrs {
     name: string;

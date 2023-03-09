@@ -10,7 +10,7 @@ import {AuthModule} from "../auth/auth.module";
 import {FilesModule} from "../files/files.module";
 import { Playlist } from "../playlists/playlists.model";
 import { PlaylistSongs } from "../playlists/playlist-songs.model";
-import { Likes } from "../users/likes.model";
+import { Likes } from "../follow/likes.model";
 
 @Module({
     providers: [SongsService],

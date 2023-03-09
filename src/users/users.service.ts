@@ -7,8 +7,6 @@ import {AddRoleDto} from "./dto/add-role.dto";
 import {BanUserDto} from "./dto/ban-user.dto";
 import {Ban} from "./bans.model";
 import {UnbanUserDto} from "./dto/unban-user.dto";
-import { AddSubscriptionDto } from "./dto/add-subscription.dto";
-import { AddLikesDto } from "./dto/add-likes.dto";
 import { Musician } from "../musicians/musicians.model";
 import { Song } from "../songs/songs.model";
 
@@ -82,26 +80,6 @@ export class UsersService {
             return user
         }
         throw new HttpException("Пользователь не забанен", HttpStatus.BAD_REQUEST);
-    }
-
-    async createSubscription(dto: AddSubscriptionDto, userId: number) {
-        const user = await this.userRepository.findByPk(userId);
-        const musician = await this.musicianRepository.findByPk(dto.musicianId);
-        if (user && musician) {
-            await user.$add('musician', musician.id);
-            return dto;
-        }
-        throw new HttpException("Пользователь или роль не найдены", HttpStatus.NOT_FOUND);
-    }
-
-    async createLikes(dto: AddLikesDto) {
-        const user = await this.userRepository.findByPk(dto.userId);
-        const song = await this.songRepository.findByPk(dto.songId);
-        if (user && song) {
-            await user.$add('song', song.id);
-            return dto;
-        }
-        throw new HttpException("Пользователь или роль не найдены", HttpStatus.NOT_FOUND);
     }
 
     async editUserById(value: number, body: Object) {

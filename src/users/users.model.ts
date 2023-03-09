@@ -5,9 +5,9 @@ import {UserRoles} from "../roles/user-roles.model";
 import {Playlist} from "../playlists/playlists.model";
 import {Musician} from "../musicians/musicians.model";
 import {Ban} from "./bans.model";
-import { Subscriptions } from "./subscription.model";
 import { Song } from "../songs/songs.model";
-import { Likes } from "./likes.model";
+import { Subscriptions } from "../follow/subscription.model";
+import { Likes } from "../follow/likes.model";
 
 interface UserCreationAttrs {
     email: string;
@@ -49,5 +49,5 @@ export class User extends Model<User, UserCreationAttrs> {
     musiciansSubscription: Musician[]
 
     @BelongsToMany(() => Song, () => Likes)
-    songs: Song[]
+    songsLikes: Song[]
 }

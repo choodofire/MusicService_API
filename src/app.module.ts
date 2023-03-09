@@ -20,9 +20,9 @@ import {AlbumsModule} from "./albums/albums.module";
 import { SongsModule } from './songs/songs.module';
 import {Song} from "./songs/songs.model";
 import { PlaylistSongs } from "./playlists/playlist-songs.model";
-import { Subscriptions } from "./users/subscription.model";
-import { Likes } from "./users/likes.model";
-import { PaymentModule } from './payment/payment.module';
+import { FollowModule } from './follow/follow.module';
+import { Subscriptions } from "./follow/subscription.model";
+import { Likes } from "./follow/likes.model";
 
 @Module({
     controllers: [],
@@ -66,7 +66,7 @@ import { PaymentModule } from './payment/payment.module';
         MusiciansModule,
         AlbumsModule,
         SongsModule,
-        PaymentModule,
+        FollowModule,
     ]
 })
 
