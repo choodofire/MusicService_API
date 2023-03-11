@@ -20,13 +20,15 @@ export class Playlist extends Model<Playlist, PlaylistCreationAttrs> {
     @Column({type: DataType.STRING, unique: true, allowNull: false})
     title: string;
 
-    @ApiPropertyOptional({example: 'Лучший плейлист', description: 'Описание плейлиста'})
+    @ApiProperty({example: 'Лучший плейлист', description: 'Описание плейлиста'})
     @Column({type: DataType.STRING, allowNull: false, defaultValue: "Нет описания"})
     description: string;
 
+    @ApiProperty({example: 'playlistAvatars/dsadfk.jpg', description: 'Путь к файлу'})
     @Column({type: DataType.STRING})
     image: string;
 
+    @ApiProperty({example: 3, description: 'Идентификатор пользователя'})
     @ForeignKey(() => User)
     @Column({type: DataType.INTEGER})
     userId: number;

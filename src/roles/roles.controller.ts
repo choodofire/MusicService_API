@@ -9,24 +9,34 @@ import {RolesGuard} from "../auth/roles.guard";
 @ApiTags('Роли')
 @Controller('roles')
 export class RolesController {
-    constructor(private roleService: RolesService) {}
+    constructor(private roleService: RolesService) {
+    }
 
-    @ApiOperation({summary: 'Создание новой роли'})
-    @ApiResponse({status: 200, type: Role})
+    @ApiOperation({ summary: 'Создание новой роли' })
+    @ApiResponse({ status: 200, type: Role })
     @Roles("ADMIN")
     @UseGuards(RolesGuard)
     @Post()
-    create(@Body() dto: CreateRoleDto) {
+    create(@Body() dto: CreateRoleDto): Promise<Role> {
         return this.roleService.createRole(dto);
     }
 
-    @ApiOperation({summary: 'Получить роль по имени'})
-    @ApiResponse({status: 200, type: Role})
-    @Roles("USER")
+    @ApiOperation({ summary: 'Получить роль по имени' })
+    @ApiResponse({ status: 200, type: Role })
+    @Roles("ADMIN")
     @UseGuards(RolesGuard)
     @Get('/:value')
-    getByValue(@Param('value') value: string) {
+    getByValue(@Param('value') value: string): Promise<Role> {
         return this.roleService.getRoleByValue(value);
     }
 
+    @ApiOperation({ summary: 'Получить все роли' })
+    @ApiResponse({ status: 200, type: [Role] })
+    @Roles("ADMIN")
+    @UseGuards(RolesGuard)
+    @Get()
+    getAllRoles(): Promise<Role[]> {
+        return this.roleService.getAllRoles();
+    }
 }
+

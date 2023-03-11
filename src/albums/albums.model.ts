@@ -19,12 +19,14 @@ export class Album extends Model<Album, AlbumCreationAttrs> {
     @Column({type: DataType.STRING, allowNull: false})
     title: string;
 
+    @ApiProperty({example: '/image/albumImage.jpg', description: 'Путь к обложке альбома'})
     @Column({type: DataType.STRING})
     image: string;
 
     @HasMany(() => Song)
     songs: Song[]
 
+    @ApiProperty({example: 3, description: 'Идентификатор исполнителя'})
     @ForeignKey(() => Musician)
     @Column({type: DataType.INTEGER})
     musicianId: number;

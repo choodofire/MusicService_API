@@ -9,9 +9,9 @@ export class MusiciansService {
     constructor(@InjectModel(Musician) private musicianRepository: typeof Musician,
                 private fileService: FilesService) {}
 
-    async create(dto: CreateMusicianDto, image: any) {
+    async create(dto: CreateMusicianDto, image: any, userId: number): Promise<Musician> {
         const fileName = await this.fileService.createFile(image, FileType.MUSICIANS_AVATARS)
-        const candidate = await this.musicianRepository.findOne({where: {userId: dto.userId}})
+        const candidate = await this.musicianRepository.findOne({where: {userId: userId}})
         if (candidate) {
             throw new HttpException('Профиль музыканта данного пользователя уже создан', HttpStatus.BAD_REQUEST)
         }
@@ -19,12 +19,12 @@ export class MusiciansService {
         return musician
     }
 
-    async getAllMusicians() {
+    async getAllMusicians(): Promise<Musician[]> {
         const musicians = await this.musicianRepository.findAll({include: {all: true}})
         return musicians
     }
 
-    async getOneMusicianById(value: number) {
+    async getOneMusicianById(value: number): Promise<Musician> {
         const musician = await this.musicianRepository.findOne({where: {id: value}})
         return musician
     }

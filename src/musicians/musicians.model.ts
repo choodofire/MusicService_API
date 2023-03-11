@@ -27,6 +27,7 @@ export class Musician extends Model<Musician, MusicianCreationAttrs> {
     @Column({type: DataType.STRING, allowNull: false})
     password: string;
 
+    @ApiProperty({example: '/avatarsMusician/bmth.jpg', description: 'Путь к файлу'})
     @Column({type: DataType.STRING})
     image: string;
 
@@ -36,6 +37,7 @@ export class Musician extends Model<Musician, MusicianCreationAttrs> {
     @HasMany(() => Song)
     songs: Song[]
 
+    @ApiProperty({example: 3, description: 'Идентификатор пользователя'})
     @ForeignKey(() => User)
     @Column({type: DataType.INTEGER})
     userId: number;

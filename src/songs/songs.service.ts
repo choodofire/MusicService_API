@@ -15,7 +15,7 @@ export class SongsService {
         return song;
     }
 
-    async listen(id: number) {
+    async listen(id: number): Promise<void> {
         const song = await this.songRepository.findByPk(id);
         song.listens += 1;
         await song.save();
@@ -25,4 +25,9 @@ export class SongsService {
     //     const songs = await this.songRepository.search(query);
     //     return songs;
     // }
+
+    async getOneSong(id: number): Promise<Song> {
+        const song = await this.songRepository.findByPk(id);
+        return song;
+    }
 }

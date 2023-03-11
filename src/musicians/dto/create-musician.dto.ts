@@ -11,11 +11,4 @@ export class CreateMusicianDto {
     @IsString({message: "Должно быть строкой"})
     @Length(4,16, {message: "Не меньше 4 и не больше 16"})
     readonly password: string;
-
-    @ApiProperty({example: 'Идентификатор пользователя', description: 'Идентификатор создателя профиля музыканта'})
-    readonly userId: number;
-
-    @ApiProperty({example: 'musicians_avatars/file1.jpg', description: 'Путь к файлу'})
-    @IsOptional()
-    readonly image: string;
 }

@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {MusiciansService} from "./musicians.service";
 import {FileInterceptor} from "@nestjs/platform-express";
@@ -18,7 +18,7 @@ export class MusiciansController {
     @Roles("ADMIN")
     @UseGuards(RolesGuard)
     @Get()
-    getAll() {
+    getAll(): Promise<Musician[]> {
         return this.musicianService.getAllMusicians();
     }
 
@@ -27,18 +27,19 @@ export class MusiciansController {
     @Roles("ADMIN")
     @UseGuards(RolesGuard)
     @Get('/:value')
-    getOne(@Param('value') value: number) {
+    getOne(@Param('value') value: number): Promise<Musician> {
         return this.musicianService.getOneMusicianById(value);
     }
 
     @ApiOperation({summary: 'Создание профиля исполнителя'})
-    @ApiResponse({status: 200, type: CreateMusicianDto})
+    @ApiResponse({status: 200, type: Musician})
     @Roles("ADMIN")
     @UseGuards(RolesGuard)
     @Post('/registration')
     @UseInterceptors(FileInterceptor('image'))
     createMusician(@Body() dto: CreateMusicianDto,
-                   @UploadedFile() image) {
-        return this.musicianService.create(dto, image)
+                   @UploadedFile() image,
+                   @Req() request): Promise<Musician> {
+        return this.musicianService.create(dto, image, request.user.id)
     }
 }

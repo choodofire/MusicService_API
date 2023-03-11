@@ -33,6 +33,10 @@ export class User extends Model<User, UserCreationAttrs> {
     @Column({type: DataType.STRING, allowNull: false})
     username: string;
 
+    @ApiProperty({example: 'true', description: 'Премиум пользователь'})
+    @Column({type: DataType.BOOLEAN, defaultValue: false})
+    isPremium: boolean;
+
     @BelongsToMany(() => Role, () => UserRoles)
     roles: Role[]
 

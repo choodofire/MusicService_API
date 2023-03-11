@@ -29,9 +29,11 @@ export class Song extends Model<Song, SongCreationAttrs> {
     @Column({type: DataType.INTEGER, allowNull: false, defaultValue: 0})
     listens: number;
 
+    @ApiProperty({example: '/songs/file1.mp3', description: 'Путь к файлу'})
     @Column({type: DataType.STRING})
     audio: string;
 
+    @ApiProperty({example: '3', description: 'id Исполнителя'})
     @ForeignKey(() => Musician)
     @Column({type: DataType.INTEGER, allowNull: false})
     musicianId: number;
@@ -39,6 +41,7 @@ export class Song extends Model<Song, SongCreationAttrs> {
     @BelongsTo(() => Musician)
     author: Musician;
 
+    @ApiProperty({example: '2', description: 'id Альбома'})
     @ForeignKey(() => Album)
     @Column({type: DataType.INTEGER, allowNull: false})
     albumId: number;

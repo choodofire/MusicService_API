@@ -18,7 +18,7 @@ export class UsersService {
                 @InjectModel(Song) private songRepository: typeof Song,
                 private roleService: RolesService) {}
 
-    async createUser(dto: CreateUserDto) {
+    async createUser(dto: CreateUserDto): Promise<User> {
         const user = await this.userRepository.create(dto);
         const role = await this.roleService.getRoleByValue('USER');
         await user.$set('roles', [role.id])
@@ -31,6 +31,37 @@ export class UsersService {
         return user;
     }
 
+    async createSuperuser(dto: CreateUserDto): Promise<User> {
+        const user = await this.userRepository.create(dto);
+
+        const roleUser = await this.roleService.getRoleByValue("USER");
+        if (!roleUser) {
+            await this.roleService.createRole({value: "USER", description: "Пользователь"})
+        }
+
+        const roleAdmin = await this.roleService.getRoleByValue("ADMIN");
+        if (!roleAdmin) {
+            await this.roleService.createRole({value: "ADMIN", description: "Администратор"})
+        }
+
+        const roleMusician = await this.roleService.getRoleByValue("MUSICIAN");
+        if (!roleMusician) {
+            await this.roleService.createRole({value: "MUSICIAN", description: "Исполнитель"})
+        }
+
+        await this.addRole({userId: user.id, value: "USER"});
+        await this.addRole({userId: user.id, value: "ADMIN"});
+        await this.addRole({userId: user.id, value: "MUSICIAN"});
+
+        const banInfo = {
+            userId: Number(user.dataValues.id),
+            banned: false,
+        }
+        await this.banRepository.create(banInfo);
+
+        return user;
+    }
+
     async getAllUsers(count = 10, offset = 0): Promise<User[]> {
         const users = await this.userRepository.findAll({
             include: {all: true},
@@ -40,17 +71,17 @@ export class UsersService {
         return users;
     }
 
-    async getOneUserById(value: number) {
+    async getOneUserById(value: number): Promise<User> {
         const user = await this.userRepository.findOne({where: {id: value}, include: {all: true}});
         return user;
     }
 
-    async getUserByEmail(email: string) {
+    async getUserByEmail(email: string): Promise<User> {
         const user = await this.userRepository.findOne({where: {email}, include: {all: true}});
         return user;
     }
 
-    async addRole(dto: AddRoleDto) {
+    async addRole(dto: AddRoleDto): Promise<AddRoleDto> {
         const user = await this.userRepository.findByPk(dto.userId);
         const role = await this.roleService.getRoleByValue(dto.value);
         if (user && role) {
@@ -60,9 +91,9 @@ export class UsersService {
         throw new HttpException("Пользователь или роль не найдены", HttpStatus.NOT_FOUND);
     }
 
-    async ban(dto: BanUserDto) {
+    async ban(dto: BanUserDto): Promise<Ban> {
         const user = await this.banRepository.findOne({where: {userId: dto.userId}});
-        if (!user?.banned) {
+        if (!user.banned) {
             user.banned = true
             user.banReason = dto.banReason
             await user.save()
@@ -71,7 +102,7 @@ export class UsersService {
         throw new HttpException("Пользователь уже забанен", HttpStatus.BAD_REQUEST);
     }
 
-    async unban(dto: UnbanUserDto) {
+    async unban(dto: UnbanUserDto): Promise<Ban> {
         const user = await this.banRepository.findOne({where: {userId: dto.userId}});
         if (user.banned) {
             user.banned = false
@@ -82,13 +113,15 @@ export class UsersService {
         throw new HttpException("Пользователь не забанен", HttpStatus.BAD_REQUEST);
     }
 
-    async editUserById(value: number, body: Object) {
+    async editUserById(value: number, body: Object): Promise<User> {
         let user = await this.userRepository.findByPk(value);
         if (user) {
             const updatedUser = Object.assign(user, body, {password: user.password});
             user = updatedUser;
-            return await user.save();
+            await user.save();
+            return user;
         }
         throw new HttpException("Пользователь не найдены", HttpStatus.NOT_FOUND);
     }
+
 }

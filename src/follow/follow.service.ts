@@ -19,7 +19,7 @@ export class FollowService {
               private roleService: RolesService) {}
 
 
-  async createSubscription(dto: FollowCreateDto, userId: number) {
+  async createSubscription(dto: FollowCreateDto, userId: number): Promise<FollowCreateDto> {
     const user = await this.userRepository.findByPk(userId);
     const musician = await this.musicianRepository.findByPk(dto.followId);
     if (user && musician) {
@@ -29,7 +29,7 @@ export class FollowService {
     throw new HttpException("Пользователь или музыкант не найдены", HttpStatus.NOT_FOUND);
   }
 
-  async createLikes(dto: FollowCreateDto, userId: number) {
+  async createLikes(dto: FollowCreateDto, userId: number): Promise<FollowCreateDto> {
     const user = await this.userRepository.findByPk(userId);
     const song = await this.songRepository.findByPk(dto.followId);
     if (user && song) {
@@ -39,7 +39,7 @@ export class FollowService {
     throw new HttpException("Пользователь или песня не найдены", HttpStatus.NOT_FOUND);
   }
 
-  async removeSubscription(dto: FollowCreateDto, userId: number) {
+  async removeSubscription(dto: FollowCreateDto, userId: number): Promise<void> {
     await this.subsRepository.destroy({
       where: {
         userId: userId,
@@ -48,7 +48,7 @@ export class FollowService {
     })
   }
 
-  async removeLikes(dto: FollowCreateDto, userId: number) {
+  async removeLikes(dto: FollowCreateDto, userId: number): Promise<void> {
     await this.likesRepository.destroy({
       where: {
           userId: userId,

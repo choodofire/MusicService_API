@@ -2,10 +2,10 @@ import {
     Body,
     Controller,
     Delete,
-    Get,
+    Get, HttpCode, HttpStatus,
     Param,
     Post,
-    Query,
+    Query, Req,
     UploadedFile,
     UseGuards,
     UseInterceptors
@@ -24,14 +24,15 @@ export class AlbumsController {
     constructor(private albumService: AlbumsService) {}
 
     @ApiOperation({summary: 'Создание альбома'})
-    @ApiResponse({status: 200, type: CreateAlbumDto})
+    @ApiResponse({status: 200, type: Album})
     @Roles("MUSICIAN")
     @UseGuards(RolesGuard)
     @Post()
     @UseInterceptors(FileInterceptor('image'))
-    createPlaylist(@Body() dto: CreateAlbumDto,
-                   @UploadedFile() image) {
-        return this.albumService.create(dto, image);
+    createAlbum(@Body() dto: CreateAlbumDto,
+                @UploadedFile() image,
+                @Req() request): Promise<Album> {
+        return this.albumService.create(dto, image, request.user.id);
     }
 
     @ApiOperation({summary: 'Получение всех альбомов'})
@@ -40,16 +41,18 @@ export class AlbumsController {
     @UseGuards(RolesGuard)
     @Get()
     getAllAlbums(@Query('count') count: number,
-                 @Query('offset') offset: number) {
+                 @Query('offset') offset: number): Promise<Album[]> {
         return this.albumService.getAllAlbums(count, offset);
     }
 
     @ApiOperation({summary: 'Удаление альбома со всеми привязанными песнями'})
-    @ApiResponse({status: 200, type: [Album]})
-    @Roles("USER")
+    @ApiResponse({status: 200, type: Album})
+    @Roles("MUSICIAN")
     @UseGuards(RolesGuard)
     @Delete('/:value')
-    deleteAlbumById(@Param('value') value: number) {
-        return this.albumService.deleteAlbumById(value)
+    @HttpCode(200)
+    deleteAlbumById(@Param('value') value: number,
+                    @Req() request): Promise<Album> {
+        return this.albumService.deleteAlbumById(value, request.user.id)
     }
 }

@@ -24,6 +24,7 @@ import {BanUserDto} from "./dto/ban-user.dto";
 import {ValidationPipe} from "../pipes/validation.pipe";
 import {UnbanUserDto} from "./dto/unban-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { Ban } from "./bans.model";
 
 
 @ApiTags('Пользователи')
@@ -37,7 +38,7 @@ export class UsersController {
     @UseGuards(RolesGuard)
     @Get()
     getAll(@Query('count') count: number,
-           @Query('offset') offset: number) {
+           @Query('offset') offset: number): Promise<User[]> {
         return this.usersService.getAllUsers(count, offset);
     }
 
@@ -46,7 +47,7 @@ export class UsersController {
     @Roles("ADMIN")
     @UseGuards(RolesGuard)
     @Get('/:value')
-    getOne(@Param('value') value: number) {
+    getOne(@Param('value') value: number): Promise<User> {
         return this.usersService.getOneUserById(value);
     }
 
@@ -56,7 +57,7 @@ export class UsersController {
     @UseGuards(RolesGuard)
     @Put('/:value')
     editOneById(@Param('value') value: number,
-                @Body() body: UpdateUserDto) {
+                @Body() body: UpdateUserDto): Promise<User> {
         return this.usersService.editUserById(value, body)
     }
 
@@ -65,25 +66,25 @@ export class UsersController {
     @Roles("ADMIN")
     @UseGuards(RolesGuard)
     @Post('/role')
-    addRole(@Body() dto: AddRoleDto) {
+    addRole(@Body() dto: AddRoleDto): Promise<AddRoleDto> {
         return this.usersService.addRole(dto);
     }
 
     @ApiOperation({summary: 'Забанить пользователя'})
-    @ApiResponse({status: 200, type: BanUserDto})
+    @ApiResponse({status: 200, type: Ban})
     @Roles("ADMIN")
     @UseGuards(RolesGuard)
     @Post('/ban')
-    ban(@Body() dto: BanUserDto) {
+    ban(@Body() dto: BanUserDto): Promise<Ban> {
         return this.usersService.ban(dto);
     }
 
     @ApiOperation({summary: 'Разбанить пользователя'})
-    @ApiResponse({status: 200, type: UnbanUserDto})
+    @ApiResponse({status: 200, type: Ban})
     @Roles("ADMIN")
     @UseGuards(RolesGuard)
     @Post('/unban')
-    unban(@Body() dto: UnbanUserDto) {
+    unban(@Body() dto: UnbanUserDto): Promise<Ban> {
         return this.usersService.unban(dto);
     }
 }
