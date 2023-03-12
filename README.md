@@ -31,6 +31,11 @@
 ```bash
 $ npm install
 ```
+## Documentation of API
+
+```bash
+$ <host>:<port>/api/docs/
+```
 
 ## Running the app
 
