@@ -3,6 +3,7 @@ import { CreateMusicianDto } from './dto/create-musician.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { FilesService, FileType } from '../files/files.service';
 import { Musician } from './musicians.model';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class MusiciansService {
@@ -16,10 +17,14 @@ export class MusiciansService {
     image: any,
     userId: number,
   ): Promise<Musician> {
-    const fileName = await this.fileService.createFile(
-      image,
-      FileType.MUSICIANS_AVATARS,
-    );
+    let fileName = 'No photo';
+    if (image) {
+      fileName = await this.fileService.createFile(
+        image,
+        FileType.MUSICIANS_AVATARS,
+      );
+    }
+
     const candidate = await this.musicianRepository.findOne({
       where: { userId: userId },
     });
@@ -31,6 +36,7 @@ export class MusiciansService {
     }
     const musician = await this.musicianRepository.create({
       ...dto,
+      userId: userId,
       image: fileName,
     });
     return musician;
@@ -48,5 +54,15 @@ export class MusiciansService {
       where: { id: value },
     });
     return musician;
+  }
+
+  async searchByName(name: string): Promise<Musician[]> {
+    return this.musicianRepository.findAll({
+      where: {
+        name: {
+          [Op.iLike]: `%${name}%`,
+        },
+      },
+    });
   }
 }

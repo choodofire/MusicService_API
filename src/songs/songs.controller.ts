@@ -17,6 +17,7 @@ import { RolesGuard } from '../auth/roles.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateSongDto } from './dto/create-song.dto';
 import { Song } from './songs.model';
+import { Musician } from "../musicians/musicians.model";
 
 @ApiTags('Песни')
 @Controller('songs')
@@ -50,5 +51,14 @@ export class SongsController {
   @Post('/:id')
   getOneSong(@Param('id') id: number): Promise<Song> {
     return this.songService.getOneSong(id);
+  }
+
+  @ApiOperation({ summary: 'Поиск песен по имени' })
+  @ApiResponse({ status: 200, type: [Song] })
+  @Roles('USER')
+  @UseGuards(RolesGuard)
+  @Get('/search/name')
+  search(@Query('name') name: string): Promise<Song[]> {
+    return this.songService.searchByName(name);
   }
 }

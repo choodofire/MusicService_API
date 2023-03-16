@@ -5,6 +5,7 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Song } from '../songs/songs.model';
 import { Musician } from '../musicians/musicians.model';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class AlbumsService {
@@ -26,10 +27,15 @@ export class AlbumsService {
     if (!musician) {
       throw new HttpException('Музыкант не найден', HttpStatus.NOT_FOUND);
     }
-    const fileName = await this.fileService.createFile(
-      image,
-      FileType.ALBUMS_IMAGE,
-    );
+
+    let fileName = 'noPhoto';
+    if (image) {
+      fileName = await this.fileService.createFile(
+        image,
+        FileType.ALBUMS_IMAGE,
+      );
+    }
+
     const album = await this.albumRepository.create({
       ...dto,
       image: fileName,
@@ -76,5 +82,15 @@ export class AlbumsService {
       'Ошибка при удалении альбома',
       HttpStatus.BAD_REQUEST,
     );
+  }
+
+  async searchByName(name: string): Promise<Album[]> {
+    return this.albumRepository.findAll({
+      where: {
+        title: {
+          [Op.iLike]: `%${name}%`,
+        },
+      },
+    });
   }
 }

@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  Optional,
   Param,
   Post,
   Req,
@@ -35,7 +36,7 @@ export class PlaylistsController {
   @UseInterceptors(FileInterceptor('image'))
   createPlaylist(
     @Body() dto: CreatePlaylistDto,
-    @UploadedFile() image,
+    @UploadedFile() @Optional() image,
     @Req() request,
   ): Promise<Playlist> {
     return this.playlistService.create(dto, image, request.user.id);

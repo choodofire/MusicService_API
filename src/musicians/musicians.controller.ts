@@ -2,8 +2,10 @@ import {
   Body,
   Controller,
   Get,
+  Optional,
   Param,
   Post,
+  Query,
   Req,
   UploadedFile,
   UseGuards,
@@ -17,6 +19,7 @@ import { Roles } from '../auth/roles-auth.decorator';
 import { RolesGuard } from '../auth/roles.guard';
 import { User } from '../users/users.model';
 import { Musician } from './musicians.model';
+import { IsOptional } from 'class-validator';
 
 @ApiTags('Исполнители')
 @Controller('musicians')
@@ -43,15 +46,24 @@ export class MusiciansController {
 
   @ApiOperation({ summary: 'Создание профиля исполнителя' })
   @ApiResponse({ status: 200, type: Musician })
-  @Roles('ADMIN')
+  @Roles('MUSICIAN')
   @UseGuards(RolesGuard)
   @Post('/registration')
   @UseInterceptors(FileInterceptor('image'))
   createMusician(
     @Body() dto: CreateMusicianDto,
-    @UploadedFile() image,
+    @UploadedFile() @Optional() image,
     @Req() request,
   ): Promise<Musician> {
     return this.musicianService.create(dto, image, request.user.id);
+  }
+
+  @ApiOperation({ summary: 'Поиск исполнителей по имени' })
+  @ApiResponse({ status: 200, type: [Musician] })
+  @Roles('USER')
+  @UseGuards(RolesGuard)
+  @Get('/search/name')
+  search(@Query('name') name: string): Promise<Musician[]> {
+    return this.musicianService.searchByName(name);
   }
 }

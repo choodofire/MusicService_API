@@ -1,8 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Song } from './songs.model';
 import { FilesService, FileType } from '../files/files.service';
 import { CreateSongDto } from './dto/create-song.dto';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class SongsService {
@@ -30,5 +31,15 @@ export class SongsService {
   async getOneSong(id: number): Promise<Song> {
     const song = await this.songRepository.findByPk(id);
     return song;
+  }
+
+  async searchByName(name: string): Promise<Song[]> {
+    return this.songRepository.findAll({
+      where: {
+        title: {
+          [Op.iLike]: `%${name}%`,
+        },
+      },
+    });
   }
 }

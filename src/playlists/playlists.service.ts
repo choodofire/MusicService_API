@@ -28,10 +28,15 @@ export class PlaylistsService {
     if (!user) {
       throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
     }
-    const fileName = await this.fileService.createFile(
-      image,
-      FileType.PLAYLIST_IMAGE,
-    );
+
+    let fileName = 'no photo';
+    if (image) {
+      fileName = await this.fileService.createFile(
+        image,
+        FileType.PLAYLIST_IMAGE,
+      );
+    }
+
     const playlist = await this.playlistRepository.create({
       ...dto,
       image: fileName,

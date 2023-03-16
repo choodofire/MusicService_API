@@ -4,7 +4,7 @@ import {
   Delete,
   Get,
   HttpCode,
-  HttpStatus,
+  Optional,
   Param,
   Post,
   Query,
@@ -34,7 +34,7 @@ export class AlbumsController {
   @UseInterceptors(FileInterceptor('image'))
   createAlbum(
     @Body() dto: CreateAlbumDto,
-    @UploadedFile() image,
+    @UploadedFile() @Optional() image,
     @Req() request,
   ): Promise<Album> {
     return this.albumService.create(dto, image, request.user.id);
@@ -63,5 +63,14 @@ export class AlbumsController {
     @Req() request,
   ): Promise<Album> {
     return this.albumService.deleteAlbumById(value, request.user.id);
+  }
+
+  @ApiOperation({ summary: 'Поиск альбомов по имени' })
+  @ApiResponse({ status: 200, type: [Album] })
+  @Roles('USER')
+  @UseGuards(RolesGuard)
+  @Get('/search/name')
+  search(@Query('name') name: string): Promise<Album[]> {
+    return this.albumService.searchByName(name);
   }
 }

@@ -47,7 +47,7 @@ export class Musician extends Model<Musician, MusicianCreationAttrs> {
     example: '/avatarsMusician/bmth.jpg',
     description: 'Путь к файлу',
   })
-  @Column({ type: DataType.STRING })
+  @Column({ type: DataType.STRING, defaultValue: 'No photo' })
   image: string;
 
   @HasMany(() => Album)

@@ -25,7 +25,7 @@ import { ValidationPipe } from '../pipes/validation.pipe';
 import { UnbanUserDto } from './dto/unban-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Ban } from './bans.model';
-import { PremiumDto } from "./dto/premium.dto";
+import { PremiumDto } from './dto/premium.dto';
 
 @ApiTags('Пользователи')
 @Controller('users')
