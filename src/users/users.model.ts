@@ -16,6 +16,7 @@ import { Ban } from './bans.model';
 import { Song } from '../songs/songs.model';
 import { Subscriptions } from '../follow/subscription.model';
 import { Likes } from '../follow/likes.model';
+import {Token} from "../auth/tokens/tokens.model";
 
 interface UserCreationAttrs {
   email: string;
@@ -46,6 +47,14 @@ export class User extends Model<User, UserCreationAttrs> {
   @Column({ type: DataType.STRING, allowNull: false })
   username: string;
 
+  @ApiProperty({ example: 'false', description: 'Активирован ли пользователь' })
+  @Column({ type: DataType.BOOLEAN, defaultValue: false })
+  isActivated: boolean;
+
+  @ApiProperty({ example: 'false', description: 'Ссылка на активацию аккаунта' })
+  @Column({ type: DataType.STRING })
+  activationLink: boolean;
+
   @ApiProperty({ example: 'true', description: 'Премиум пользователь' })
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
   isPremium: boolean;
@@ -61,6 +70,9 @@ export class User extends Model<User, UserCreationAttrs> {
 
   @HasOne(() => Ban)
   bans: Ban;
+
+  @HasOne(() => Token)
+  tokens: Token;
 
   @BelongsToMany(() => Musician, () => Subscriptions)
   musiciansSubscription: Musician[];

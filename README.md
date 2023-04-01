@@ -63,8 +63,15 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Docker-compose
+```docker
+# build
+$ docker build -t musicservice .
 
+# run
+$ docker run -p 5000:5000 --name musicservice musicservice
+```
+
+## docker-compose
 ```bash
 # build
 $ docker-compose build

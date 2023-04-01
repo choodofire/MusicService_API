@@ -23,6 +23,7 @@ import { PlaylistSongs } from './playlists/playlist-songs.model';
 import { FollowModule } from './follow/follow.module';
 import { Subscriptions } from './follow/subscription.model';
 import { Likes } from './follow/likes.model';
+import {Token} from "./auth/tokens/tokens.model";
 
 @Module({
   controllers: [],
@@ -53,6 +54,7 @@ import { Likes } from './follow/likes.model';
         PlaylistSongs,
         Subscriptions,
         Likes,
+        Token,
       ],
       autoLoadModels: true,
       synchronize: true,

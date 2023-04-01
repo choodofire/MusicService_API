@@ -1,14 +1,18 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
 
 async function start() {
   const PORT = process.env.PORT || 5000;
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
+
+  app.use(cookieParser());
+  app.enableCors();
 
   const config = new DocumentBuilder()
     .setTitle('Music-streaming-service')
-    .setDescription('Документация REST API')
+    .setDescription('Документация REST API для музыкального стримингового сервиса')
     .setVersion('1.0.0')
     .addTag('Vyacheslav Gordeev')
     .build();

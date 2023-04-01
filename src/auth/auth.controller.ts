@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UsePipes } from '@nestjs/common';
+import {Body, Controller, Param, Post, UseGuards, UsePipes} from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginUserDto } from './dto/login-user.dto';
 import { AuthService } from './auth.service';
@@ -7,6 +7,9 @@ import { ValidationPipe } from '../pipes/validation.pipe';
 import { User } from '../users/users.model';
 import { JwtSecretRequestType } from '@nestjs/jwt';
 import { JwtTokenDto } from './dto/jwt-token.dto';
+import {AddRoleDto} from "../users/dto/add-role.dto";
+import {Roles} from "./roles-auth.decorator";
+import {RolesGuard} from "./roles.guard";
 
 @ApiTags('Авторизация')
 @Controller('auth')
@@ -34,5 +37,28 @@ export class AuthController {
   @Post('/registration/superuser')
   registrationSuperuser(@Body() userDto: CreateUserDto): Promise<Object> {
     return this.authService.registrationSuperUser(userDto);
+  }
+
+  @ApiOperation({ summary: 'Выход из сервиса' })
+  @ApiResponse({ status: 200, })
+  @Roles('USER')
+  @UseGuards(RolesGuard)
+  @Post('/logout')
+  logout() {
+    return this.authService.logout();
+  }
+
+  @ApiOperation({ summary: 'Активация почты' })
+  @ApiResponse({ status: 200, })
+  @Post('/activate/:link')
+  activate(@Param('link') link: string) {
+    return this.authService.activate(link);
+  }
+
+  @ApiOperation({ summary: 'Обновление refresh токена' })
+  @ApiResponse({ status: 200 })
+  @Post('/refresh')
+  refresh() {
+    return this.authService.refresh();
   }
 }

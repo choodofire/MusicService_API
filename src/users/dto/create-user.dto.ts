@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, Length } from 'class-validator';
+import {IsEmail, IsOptional, IsString, Length} from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'user@outlook.com', description: 'Почтовый ящик' })
@@ -16,4 +16,9 @@ export class CreateUserDto {
   @IsString({ message: 'Должно быть строкой' })
   @Length(2, 16, { message: 'Не меньше 2 и не больше 16' })
   readonly username: string;
+
+  @ApiProperty({ example: '/auth/activate/cd2312-das-312', description: 'Ссылка на активацию аккаунта' })
+  @IsString({ message: 'Должно быть строкой' })
+  @IsOptional()
+  readonly activationLink: string;
 }
