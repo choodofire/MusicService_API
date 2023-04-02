@@ -13,7 +13,6 @@ import { Ban } from './bans.model';
 import { Song } from '../songs/songs.model';
 import { Likes } from '../follow/likes.model';
 import { Subscriptions } from '../follow/subscription.model';
-import {Token} from "../auth/tokens/tokens.model";
 
 @Module({
   controllers: [UsersController],
@@ -29,7 +28,6 @@ import {Token} from "../auth/tokens/tokens.model";
       Subscriptions,
       Likes,
       Song,
-      Token,
     ]),
     RolesModule,
     forwardRef(() => AuthModule),

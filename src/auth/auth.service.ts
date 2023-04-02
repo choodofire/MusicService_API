@@ -8,32 +8,59 @@ import {
 } from '@nestjs/common';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UsersService } from '../users/users.service';
-import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { User } from '../users/users.model';
 import { v4 as uuidv4 } from 'uuid';
-import { JwtTokenDto } from './dto/jwt-token.dto';
 import {MailService} from "./mail.service";
 import {InjectModel} from "@nestjs/sequelize";
-import {Token} from "./tokens/tokens.model";
-import {GenerateUserTokenDto} from "./dto/generate-user-token.dto";
+import {RegisterUserResponseDto} from "./dto/register-user-response.dto";
+import { Request } from "express";
+import {TokenService} from "../tokens/tokens.service";
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel(Token) private tokenRepository: typeof Token,
+    @InjectModel(User) private userRepository: typeof User,
     private userService: UsersService,
-    private jwtService: JwtService,
+    private tokenService: TokenService,
     private mailService: MailService,
   ) {}
 
-  async login(userDto: LoginUserDto): Promise<Object> {
+  async login(userDto: LoginUserDto): Promise<RegisterUserResponseDto> {
     const user = await this.validateUser(userDto);
-    return this.generateToken(user);
+    const tokens = await this.tokenService.generateToken(user);
+
+    await this.tokenService.saveToken(user.id, tokens.refreshToken);
+
+    const userDtoResponse = Object.assign(userDto, {password: null})
+
+    return {
+      ...tokens,
+      user: userDtoResponse,
+    };
   }
 
-  async registration(userDto: CreateUserDto): Promise<Object> {
+  private async validateUser(userDto: LoginUserDto): Promise<User> {
+    const user = await this.userService.getUserByEmail(userDto.email);
+    if (!user) {
+      throw new UnauthorizedException({
+        message: 'Некорректный email или пароль',
+      });
+    }
+    const passwordEquals = await bcrypt.compare(
+        userDto.password,
+        user.password,
+    );
+    if (user && passwordEquals) {
+      return user;
+    }
+    throw new UnauthorizedException({
+      message: 'Некорректный email или пароль',
+    });
+  }
+
+  async registration(userDto: CreateUserDto): Promise<RegisterUserResponseDto> {
     const candidate = await this.userService.getUserByEmail(userDto.email);
     if (candidate) {
       throw new HttpException(
@@ -50,61 +77,27 @@ export class AuthService {
       activationLink,
     });
 
-    await this.mailService.sendActivationMail(userDto.email, activationLink);
-    const tokens = await this.generateToken(user);
-    // await this.saveToken(user.id, tokens.refreshToken);
-    const cookieOptions = {
-      httpOnly: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000,
+    // Гугл отключил авторизацию из небезопасных приложений, нужно будет подправить на другой сервис.
+    if (process.env.MAIL_ACCEPT) {
+      await this.mailService.sendActivationMail(userDto.email, `${process.env.API_URL}/auth/activate/${activationLink}`);
     }
+
+    const tokens = await this.tokenService.generateToken(user);
+    await this.tokenService.saveToken(user.id, tokens.refreshToken);
+
+    const userDtoResponse = Object.assign(userDto, {password: null})
     return {
       ...tokens,
-      user: userDto,
-      cookie: ['refreshToken', tokens.refreshToken, cookieOptions]
+      user: userDtoResponse,
     };
   }
 
-  private async generateToken(user: GenerateUserTokenDto) {
-    const payload = { email: user.email, id: user.id, roles: user.roles, isActivated: user.isActivated };
-    return {
-      accessToken: this.jwtService.sign(payload, {
-        privateKey: process.env.JWT_ACCESS_SECRET,
-        expiresIn: '30m',
-      }),
-      refreshToken: this.jwtService.sign(payload, {
-        privateKey: process.env.JWT_REFRESH_SECRET,
-        expiresIn: '30d',
-      }),
-    };
-  }
-
-  private async saveToken(userId: number, refreshToken: string): Promise<Token> {
-    const tokenData = await this.tokenRepository.findOne({
-      where: { userId },
-    });
-    if (tokenData) {
-      tokenData.refreshToken = refreshToken;
-      return tokenData.save();
+  async registrationSuperUser(): Promise<Object> {
+    const userDto = {
+      email: process.env.ADMIN_MAIL,
+      password: process.env.ADMIN_PASSWORD,
+      username: process.env.ADMIN_USERNAME,
     }
-    const token = await this.tokenRepository.create({userId, refreshToken})
-    return token;
-  }
-
-  private async validateUser(userDto: LoginUserDto): Promise<User> {
-    const user = await this.userService.getUserByEmail(userDto.email);
-    const passwordEquals = await bcrypt.compare(
-      userDto.password,
-      user.password,
-    );
-    if (user && passwordEquals) {
-      return user;
-    }
-    throw new UnauthorizedException({
-      message: 'Некорректный email или пароль',
-    });
-  }
-
-  async registrationSuperUser(userDto: CreateUserDto): Promise<Object> {
     const candidate = await this.userService.getAllUsers(1);
     if (candidate.length) {
       throw new HttpException(
@@ -115,20 +108,38 @@ export class AuthService {
     const hashPassword = await bcrypt.hash(userDto.password, 5);
     const user = await this.userService.createSuperuser({
       ...userDto,
+      activationLink: "admin",
       password: hashPassword,
     });
-    return this.generateToken(user);
+    return this.tokenService.generateToken(user);
   }
 
-  async logout() {
-
-  }
-
-  async activate(link) {
-
+  // Доработать удаление из куков токена
+  async logout(request: Request): Promise<Object> {
+    const {refreshToken} = request.cookies;
+    const token = await this.tokenService.removeToken(refreshToken);
+    return {
+      token: token,
+    }
   }
 
   async refresh() {
 
+  }
+
+  async activate(activationLink: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        activationLink
+      }
+    })
+    if (!user) {
+      throw new HttpException(
+          'Пользователь с такой ссылкой не существует',
+          HttpStatus.BAD_REQUEST,
+      );
+    }
+    user.isActivated = true;
+    await user.save();
   }
 }

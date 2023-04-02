@@ -46,7 +46,6 @@ export class UsersService {
         description: 'Пользователь',
       });
     }
-
     const roleAdmin = await this.roleService.getRoleByValue('ADMIN');
     if (!roleAdmin) {
       await this.roleService.createRole({
@@ -54,7 +53,6 @@ export class UsersService {
         description: 'Администратор',
       });
     }
-
     const roleMusician = await this.roleService.getRoleByValue('MUSICIAN');
     if (!roleMusician) {
       await this.roleService.createRole({

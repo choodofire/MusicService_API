@@ -8,7 +8,10 @@ async function start() {
   const app = await NestFactory.create(AppModule, { cors: true });
 
   app.use(cookieParser());
-  app.enableCors();
+  app.enableCors({
+    credentials: true,
+    origin: process.env.FRONTEND_URL,
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Music-streaming-service')

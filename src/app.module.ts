@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module} from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
@@ -23,7 +23,7 @@ import { PlaylistSongs } from './playlists/playlist-songs.model';
 import { FollowModule } from './follow/follow.module';
 import { Subscriptions } from './follow/subscription.model';
 import { Likes } from './follow/likes.model';
-import {Token} from "./auth/tokens/tokens.model";
+import {TokensModule} from "./tokens/tokens.module";
 
 @Module({
   controllers: [],
@@ -54,7 +54,6 @@ import {Token} from "./auth/tokens/tokens.model";
         PlaylistSongs,
         Subscriptions,
         Likes,
-        Token,
       ],
       autoLoadModels: true,
       synchronize: true,
@@ -69,6 +68,7 @@ import {Token} from "./auth/tokens/tokens.model";
     AlbumsModule,
     SongsModule,
     FollowModule,
+    TokensModule,
   ],
 })
 export class AppModule {}
