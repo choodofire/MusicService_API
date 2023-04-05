@@ -1,20 +1,19 @@
 import { Module} from '@nestjs/common';
 import {TokenService} from "./tokens.service";
-import { RedisModule } from '@liaoliaots/nestjs-redis';
 import {JwtModule, JwtService} from "@nestjs/jwt";
-
+import {SequelizeModule} from "@nestjs/sequelize";
+import {User} from "../users/users.model";
+import {Ban} from "../users/bans.model";
+import {Token} from "./tokens.model";
 
 @Module({
     providers: [TokenService],
     imports: [
         JwtModule.register({}),
-        RedisModule.forRoot({
-            readyLog: true,
-            config: {
-                host: 'localhost',
-                port: 6379,
-            }
-        })
+        SequelizeModule.forFeature([
+            User,
+            Token,
+        ]),
     ],
     exports: [TokenService],
 })

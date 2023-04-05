@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class GenerateUserTokenDto {
+export class GenerateTokensPayloadDto {
     @ApiProperty({ example: 'dajs.dsaf21.dasfads', description: 'Jwt токен' })
     readonly email: string;
 

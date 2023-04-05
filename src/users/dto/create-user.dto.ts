@@ -16,7 +16,9 @@ export class CreateUserDto {
   @IsString({ message: 'Должно быть строкой' })
   @Length(2, 16, { message: 'Не меньше 2 и не больше 16' })
   readonly username: string;
+}
 
+export class CreateUserLinkDto extends CreateUserDto {
   @ApiProperty({ example: '/auth/activate/cd2312-das-312', description: 'Ссылка на активацию аккаунта' })
   @IsString({ message: 'Должно быть строкой' })
   @IsOptional()

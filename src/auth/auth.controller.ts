@@ -4,13 +4,11 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { ValidationPipe } from '../pipes/validation.pipe';
-import { User } from '../users/users.model';
-import { JwtSecretRequestType } from '@nestjs/jwt';
-import { JwtTokenDto } from './dto/jwt-token.dto';
-import {AddRoleDto} from "../users/dto/add-role.dto";
 import {Roles} from "./roles-auth.decorator";
 import {RolesGuard} from "./roles.guard";
 import { Response, Request } from "express";
+import {RegisterUserResponseDto} from "./dto/register-user-response.dto";
+import {LogoutUserResponseDto} from "./dto/logout-user-response.dto";
 
 @ApiTags('Авторизация')
 @Controller('auth')
@@ -18,7 +16,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @ApiOperation({ summary: 'Авторизация пользователя' })
-  @ApiResponse({ status: 200, type: JwtTokenDto })
+  @ApiResponse({ status: 200, type: RegisterUserResponseDto })
   @Post('/login')
   async login(@Body() userDto: LoginUserDto,
         @Res({ passthrough: true }) response: Response): Promise<Object> {
@@ -32,7 +30,7 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Регистрация пользователя' })
   @UsePipes(ValidationPipe)
-  @ApiResponse({ status: 201, type: JwtTokenDto })
+  @ApiResponse({ status: 201, type: RegisterUserResponseDto })
   @Post('/registration')
   async registration(
       @Body() userDto: CreateUserDto,
@@ -47,17 +45,17 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Регистрация суперпользователя со всеми ролями' })
   @UsePipes(ValidationPipe)
-  @ApiResponse({ status: 201, type: JwtTokenDto })
+  @ApiResponse({ status: 201, type: RegisterUserResponseDto })
   @Post('/registration/superuser')
   registrationSuperuser(): Promise<Object> {
     return this.authService.registrationSuperUser();
   }
 
   @ApiOperation({ summary: 'Выход из сервиса' })
-  @ApiResponse({ status: 200, })
+  @ApiResponse({ status: 200, type: LogoutUserResponseDto})
   @Post('/logout')
   logout(@Req() request: Request,
-         @Res({ passthrough: true }) response: Response): Promise<Object> {
+         @Res({ passthrough: true }) response: Response): Promise<LogoutUserResponseDto> {
     response.clearCookie('refreshToken');
     return this.authService.logout(request);
   }

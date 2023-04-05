@@ -17,6 +17,7 @@ import {InjectModel} from "@nestjs/sequelize";
 import {RegisterUserResponseDto} from "./dto/register-user-response.dto";
 import { Request } from "express";
 import {TokenService} from "../tokens/tokens.service";
+import {LogoutUserResponseDto} from "./dto/logout-user-response.dto";
 
 @Injectable()
 export class AuthService {
@@ -31,9 +32,14 @@ export class AuthService {
     const user = await this.validateUser(userDto);
     const tokens = await this.tokenService.generateToken(user);
 
-    await this.tokenService.saveToken(user.id, tokens.refreshToken);
+    const tokenInfo = {
+      userId: user.id,
+      refreshToken: tokens.refreshToken,
+    }
+    await this.tokenService.saveToken(tokenInfo);
 
-    const userDtoResponse = Object.assign(userDto, {password: null})
+    const userDtoResponse = Object.assign(userDto);
+    delete userDtoResponse.password;
 
     return {
       ...tokens,
@@ -83,9 +89,16 @@ export class AuthService {
     }
 
     const tokens = await this.tokenService.generateToken(user);
-    await this.tokenService.saveToken(user.id, tokens.refreshToken);
 
-    const userDtoResponse = Object.assign(userDto, {password: null})
+    const tokenInfo = {
+      userId: user.id,
+      refreshToken: tokens.refreshToken,
+    }
+    await this.tokenService.saveToken(tokenInfo);
+
+    const userDtoResponse = Object.assign(userDto);
+    delete userDtoResponse.password;
+
     return {
       ...tokens,
       user: userDtoResponse,
@@ -111,15 +124,33 @@ export class AuthService {
       activationLink: "admin",
       password: hashPassword,
     });
-    return this.tokenService.generateToken(user);
+
+    const tokens = await this.tokenService.generateToken(user);
+
+    const tokenInfo = {
+      userId: user.id,
+      refreshToken: tokens.refreshToken,
+    }
+    await this.tokenService.saveToken(tokenInfo);
+
+    const userDtoResponse = Object.assign(userDto);
+    delete userDtoResponse.password;
+
+    return {
+      ...tokens,
+      user: userDtoResponse,
+    };
   }
 
-  // Доработать удаление из куков токена
-  async logout(request: Request): Promise<Object> {
+  async logout(request: Request): Promise<LogoutUserResponseDto> {
     const {refreshToken} = request.cookies;
+    if (!refreshToken) throw new HttpException(
+        'Токен не найден',
+        HttpStatus.NOT_FOUND,
+    );
     const token = await this.tokenService.removeToken(refreshToken);
     return {
-      token: token,
+      refreshToken: token || "",
     }
   }
 

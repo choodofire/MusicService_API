@@ -16,6 +16,7 @@ import { Ban } from './bans.model';
 import { Song } from '../songs/songs.model';
 import { Subscriptions } from '../follow/subscription.model';
 import { Likes } from '../follow/likes.model';
+import {Token} from "../tokens/tokens.model";
 
 interface UserCreationAttrs {
   email: string;
@@ -69,6 +70,9 @@ export class User extends Model<User, UserCreationAttrs> {
 
   @HasOne(() => Ban)
   bans: Ban;
+
+  @HasOne(() => Token)
+  tokens: Token;
 
   @BelongsToMany(() => Musician, () => Subscriptions)
   musiciansSubscription: Musician[];

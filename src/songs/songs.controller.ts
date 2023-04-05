@@ -17,7 +17,6 @@ import { RolesGuard } from '../auth/roles.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateSongDto } from './dto/create-song.dto';
 import { Song } from './songs.model';
-import { Musician } from "../musicians/musicians.model";
 
 @ApiTags('Песни')
 @Controller('songs')

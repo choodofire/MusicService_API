@@ -24,6 +24,8 @@ import { FollowModule } from './follow/follow.module';
 import { Subscriptions } from './follow/subscription.model';
 import { Likes } from './follow/likes.model';
 import {TokensModule} from "./tokens/tokens.module";
+import { CachingModule } from './caching/caching.module';
+import {Token} from "./tokens/tokens.model";
 
 @Module({
   controllers: [],
@@ -54,6 +56,7 @@ import {TokensModule} from "./tokens/tokens.module";
         PlaylistSongs,
         Subscriptions,
         Likes,
+        Token,
       ],
       autoLoadModels: true,
       synchronize: true,
@@ -69,6 +72,7 @@ import {TokensModule} from "./tokens/tokens.module";
     SongsModule,
     FollowModule,
     TokensModule,
+    CachingModule,
   ],
 })
 export class AppModule {}
