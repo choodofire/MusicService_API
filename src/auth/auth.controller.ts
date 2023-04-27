@@ -103,10 +103,24 @@ export class AuthController {
     response.redirect(process.env.FRONTEND_URL);
   }
 
+  //todo
   @ApiOperation({ summary: 'Обновление refresh токена' })
   @ApiResponse({ status: 200 })
   @Get('/refresh')
-  refresh() {
-    return this.authService.refresh();
+  async refresh(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const { refreshToken } = request.cookies;
+    const tokensAndInfo = await this.authService.refresh(refreshToken);
+    const jwtRefresh = tokensAndInfo.refreshToken;
+    response.cookie('refreshToken', jwtRefresh, {
+      httpOnly: true,
+      secure: false,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+    return {
+      ...tokensAndInfo,
+    };
   }
 }

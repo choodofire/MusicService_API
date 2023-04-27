@@ -20,7 +20,7 @@ export class TokenService {
     return save;
   }
 
-  async getToken(userId: number): Promise<string> {
+  async getTokenById(userId: number): Promise<string> {
     const tokens = await this.tokenRepository.findOne({
       where: {
         userId,
@@ -68,5 +68,12 @@ export class TokenService {
         expiresIn: '30d',
       }),
     };
+  }
+
+  async findToken(refreshToken) {
+    const tokenData = await this.tokenRepository.findOne({
+      where: { refreshToken },
+    });
+    return tokenData;
   }
 }

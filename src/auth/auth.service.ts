@@ -153,7 +153,34 @@ export class AuthService {
     };
   }
 
-  async refresh() {}
+  async refresh(refreshToken: string) {
+    if (!refreshToken) {
+      throw new UnauthorizedException({
+        message: 'Пользователь не авторизован',
+      });
+    }
+    const tokenFromDb = await this.tokenService.findToken(refreshToken);
+
+    if (!tokenFromDb) {
+      throw new UnauthorizedException({
+        message: 'Пользователь не авторизован',
+      });
+    }
+    const user = await this.userRepository.findByPk(tokenFromDb.dataValues.id);
+
+    const tokens = await this.tokenService.generateToken(user);
+
+    const tokenInfo = {
+      userId: user.id,
+      refreshToken: tokens.refreshToken,
+    };
+    await this.tokenService.saveToken(tokenInfo);
+
+    return {
+      ...tokens,
+      user,
+    };
+  }
 
   async activate(activationLink: string) {
     const user = await this.userRepository.findOne({
