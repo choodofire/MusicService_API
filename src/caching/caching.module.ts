@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CachingService } from './caching.service';
-import {RedisModule} from "@liaoliaots/nestjs-redis";
+import { RedisModule } from '@liaoliaots/nestjs-redis';
 
 @Module({
   providers: [CachingService],
@@ -10,11 +10,9 @@ import {RedisModule} from "@liaoliaots/nestjs-redis";
       config: {
         host: 'localhost',
         port: 6379,
-      }
-    })
+      },
+    }),
   ],
-  exports: [
-      CachingService
-  ],
+  exports: [CachingService],
 })
 export class CachingModule {}

@@ -17,9 +17,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateMusicianDto } from './dto/create-musician.dto';
 import { Roles } from '../auth/roles-auth.decorator';
 import { RolesGuard } from '../auth/roles.guard';
-import { User } from '../users/users.model';
 import { Musician } from './musicians.model';
-import { IsOptional } from 'class-validator';
 
 @ApiTags('Исполнители')
 @Controller('musicians')

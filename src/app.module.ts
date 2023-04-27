@@ -1,4 +1,4 @@
-import { Module} from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
@@ -23,9 +23,9 @@ import { PlaylistSongs } from './playlists/playlist-songs.model';
 import { FollowModule } from './follow/follow.module';
 import { Subscriptions } from './follow/subscription.model';
 import { Likes } from './follow/likes.model';
-import {TokensModule} from "./tokens/tokens.module";
+import { TokensModule } from './tokens/tokens.module';
 import { CachingModule } from './caching/caching.module';
-import {Token} from "./tokens/tokens.model";
+import { Token } from './tokens/tokens.model';
 
 @Module({
   controllers: [],

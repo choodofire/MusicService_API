@@ -1,14 +1,21 @@
-import {Body, Controller, Get, Param, Post, Redirect, Req, Res, UseGuards, UsePipes} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  Res,
+  UsePipes,
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginUserDto } from './dto/login-user.dto';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { ValidationPipe } from '../pipes/validation.pipe';
-import {Roles} from "./roles-auth.decorator";
-import {RolesGuard} from "./roles.guard";
-import { Response, Request } from "express";
-import {RegisterUserResponseDto} from "./dto/register-user-response.dto";
-import {LogoutUserResponseDto} from "./dto/logout-user-response.dto";
+import { Response, Request } from 'express';
+import { RegisterUserResponseDto } from './dto/register-user-response.dto';
+import { LogoutUserResponseDto } from './dto/logout-user-response.dto';
 
 @ApiTags('Авторизация')
 @Controller('auth')
@@ -18,14 +25,20 @@ export class AuthController {
   @ApiOperation({ summary: 'Авторизация пользователя' })
   @ApiResponse({ status: 200, type: RegisterUserResponseDto })
   @Post('/login')
-  async login(@Body() userDto: LoginUserDto,
-        @Res({ passthrough: true }) response: Response): Promise<Object> {
+  async login(
+    @Body() userDto: LoginUserDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<Object> {
     const tokensAndInfo = await this.authService.login(userDto);
     const jwtRefresh = tokensAndInfo.refreshToken;
-    response.cookie('refreshToken', jwtRefresh, { httpOnly: true, secure: false, maxAge: 30 * 24 * 60 * 60 * 1000, });
+    response.cookie('refreshToken', jwtRefresh, {
+      httpOnly: true,
+      secure: false,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
     return {
-      ...tokensAndInfo
-    }
+      ...tokensAndInfo,
+    };
   }
 
   @ApiOperation({ summary: 'Регистрация пользователя' })
@@ -33,29 +46,48 @@ export class AuthController {
   @ApiResponse({ status: 201, type: RegisterUserResponseDto })
   @Post('/registration')
   async registration(
-      @Body() userDto: CreateUserDto,
-      @Res({ passthrough: true }) response: Response): Promise<Object> {
+    @Body() userDto: CreateUserDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<Object> {
     const tokensAndInfo = await this.authService.registration(userDto);
     const jwtRefresh = tokensAndInfo.refreshToken;
-    response.cookie('refreshToken', jwtRefresh, { httpOnly: true, secure: false, maxAge: 30 * 24 * 60 * 60 * 1000, });
+    response.cookie('refreshToken', jwtRefresh, {
+      httpOnly: true,
+      secure: false,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
     return {
-      ...tokensAndInfo
-    }
+      ...tokensAndInfo,
+    };
   }
 
   @ApiOperation({ summary: 'Регистрация суперпользователя со всеми ролями' })
   @UsePipes(ValidationPipe)
   @ApiResponse({ status: 201, type: RegisterUserResponseDto })
   @Post('/registration/superuser')
-  registrationSuperuser(): Promise<Object> {
-    return this.authService.registrationSuperUser();
+  async registrationSuperuser(
+    @Body() userDto: CreateUserDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<Object> {
+    const tokensAndInfo = await this.authService.registrationSuperUser();
+    const jwtRefresh = tokensAndInfo.refreshToken;
+    response.cookie('refreshToken', jwtRefresh, {
+      httpOnly: true,
+      secure: false,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+    return {
+      ...tokensAndInfo,
+    };
   }
 
   @ApiOperation({ summary: 'Выход из сервиса' })
-  @ApiResponse({ status: 200, type: LogoutUserResponseDto})
+  @ApiResponse({ status: 200, type: LogoutUserResponseDto })
   @Post('/logout')
-  logout(@Req() request: Request,
-         @Res({ passthrough: true }) response: Response): Promise<LogoutUserResponseDto> {
+  logout(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<LogoutUserResponseDto> {
     response.clearCookie('refreshToken');
     return this.authService.logout(request);
   }
@@ -63,10 +95,12 @@ export class AuthController {
   @ApiOperation({ summary: 'Активация почты' })
   @ApiResponse({ status: 302 })
   @Get('/activate/:link')
-  async activate(@Param('link') link: string,
-           @Res({ passthrough: true }) response: Response): Promise<void> {
+  async activate(
+    @Param('link') link: string,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<void> {
     await this.authService.activate(link);
-    response.redirect(process.env.FRONTEND_URL)
+    response.redirect(process.env.FRONTEND_URL);
   }
 
   @ApiOperation({ summary: 'Обновление refresh токена' })

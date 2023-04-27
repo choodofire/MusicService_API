@@ -15,7 +15,9 @@ async function start() {
 
   const config = new DocumentBuilder()
     .setTitle('Music-streaming-service')
-    .setDescription('Документация REST API для музыкального стримингового сервиса')
+    .setDescription(
+      'Документация REST API для музыкального стримингового сервиса',
+    )
     .setVersion('1.0.0')
     .addTag('Vyacheslav Gordeev')
     .build();
@@ -24,8 +26,7 @@ async function start() {
 
   await app.listen(PORT, () => {
     console.log(`Server started on PORT ${PORT}`);
-
-  })
+  });
 }
 
 start();

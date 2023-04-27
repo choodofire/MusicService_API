@@ -13,7 +13,7 @@ import { Ban } from './bans.model';
 import { Song } from '../songs/songs.model';
 import { Likes } from '../follow/likes.model';
 import { Subscriptions } from '../follow/subscription.model';
-import {Token} from "../tokens/tokens.model";
+import { Token } from '../tokens/tokens.model';
 
 @Module({
   controllers: [UsersController],

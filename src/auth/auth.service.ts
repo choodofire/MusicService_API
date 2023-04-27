@@ -1,9 +1,7 @@
 import {
-  Body,
   HttpException,
   HttpStatus,
   Injectable,
-  Post,
   UnauthorizedException,
 } from '@nestjs/common';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -12,12 +10,12 @@ import * as bcrypt from 'bcryptjs';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { User } from '../users/users.model';
 import { v4 as uuidv4 } from 'uuid';
-import {MailService} from "./mail.service";
-import {InjectModel} from "@nestjs/sequelize";
-import {RegisterUserResponseDto} from "./dto/register-user-response.dto";
-import { Request } from "express";
-import {TokenService} from "../tokens/tokens.service";
-import {LogoutUserResponseDto} from "./dto/logout-user-response.dto";
+import { MailService } from './mail.service';
+import { InjectModel } from '@nestjs/sequelize';
+import { RegisterUserResponseDto } from './dto/register-user-response.dto';
+import { Request } from 'express';
+import { TokenService } from '../tokens/tokens.service';
+import { LogoutUserResponseDto } from './dto/logout-user-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -35,7 +33,7 @@ export class AuthService {
     const tokenInfo = {
       userId: user.id,
       refreshToken: tokens.refreshToken,
-    }
+    };
     await this.tokenService.saveToken(tokenInfo);
 
     const userDtoResponse = Object.assign(userDto);
@@ -55,8 +53,8 @@ export class AuthService {
       });
     }
     const passwordEquals = await bcrypt.compare(
-        userDto.password,
-        user.password,
+      userDto.password,
+      user.password,
     );
     if (user && passwordEquals) {
       return user;
@@ -83,9 +81,12 @@ export class AuthService {
       activationLink,
     });
 
-    // Гугл отключил авторизацию из небезопасных приложений, нужно будет подправить на другой сервис.
+    // todo. Google disabled auth
     if (process.env.MAIL_ACCEPT) {
-      await this.mailService.sendActivationMail(userDto.email, `${process.env.API_URL}/auth/activate/${activationLink}`);
+      await this.mailService.sendActivationMail(
+        userDto.email,
+        `${process.env.API_URL}/auth/activate/${activationLink}`,
+      );
     }
 
     const tokens = await this.tokenService.generateToken(user);
@@ -93,7 +94,7 @@ export class AuthService {
     const tokenInfo = {
       userId: user.id,
       refreshToken: tokens.refreshToken,
-    }
+    };
     await this.tokenService.saveToken(tokenInfo);
 
     const userDtoResponse = Object.assign(userDto);
@@ -105,12 +106,12 @@ export class AuthService {
     };
   }
 
-  async registrationSuperUser(): Promise<Object> {
+  async registrationSuperUser(): Promise<RegisterUserResponseDto> {
     const userDto = {
       email: process.env.ADMIN_MAIL,
       password: process.env.ADMIN_PASSWORD,
       username: process.env.ADMIN_USERNAME,
-    }
+    };
     const candidate = await this.userService.getAllUsers(1);
     if (candidate.length) {
       throw new HttpException(
@@ -121,7 +122,7 @@ export class AuthService {
     const hashPassword = await bcrypt.hash(userDto.password, 5);
     const user = await this.userService.createSuperuser({
       ...userDto,
-      activationLink: "admin",
+      activationLink: 'admin',
       password: hashPassword,
     });
 
@@ -130,7 +131,7 @@ export class AuthService {
     const tokenInfo = {
       userId: user.id,
       refreshToken: tokens.refreshToken,
-    }
+    };
     await this.tokenService.saveToken(tokenInfo);
 
     const userDtoResponse = Object.assign(userDto);
@@ -143,31 +144,27 @@ export class AuthService {
   }
 
   async logout(request: Request): Promise<LogoutUserResponseDto> {
-    const {refreshToken} = request.cookies;
-    if (!refreshToken) throw new HttpException(
-        'Токен не найден',
-        HttpStatus.NOT_FOUND,
-    );
+    const { refreshToken } = request.cookies;
+    if (!refreshToken)
+      throw new HttpException('Токен не найден', HttpStatus.NOT_FOUND);
     const token = await this.tokenService.removeToken(refreshToken);
     return {
-      refreshToken: token || "",
-    }
+      refreshToken: token || '',
+    };
   }
 
-  async refresh() {
-
-  }
+  async refresh() {}
 
   async activate(activationLink: string) {
     const user = await this.userRepository.findOne({
       where: {
-        activationLink
-      }
-    })
+        activationLink,
+      },
+    });
     if (!user) {
       throw new HttpException(
-          'Пользователь с такой ссылкой не существует',
-          HttpStatus.BAD_REQUEST,
+        'Пользователь с такой ссылкой не существует',
+        HttpStatus.BAD_REQUEST,
       );
     }
     user.isActivated = true;

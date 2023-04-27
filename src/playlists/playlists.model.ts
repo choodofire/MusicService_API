@@ -7,7 +7,7 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { User } from '../users/users.model';
 import { Song } from '../songs/songs.model';
 import { PlaylistSongs } from './playlist-songs.model';
