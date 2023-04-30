@@ -50,7 +50,12 @@ export class AuthService {
 
   async login(id: number) {
     return {
-      access_token: await this.jwtService.signAsync({id})
+      access_token: await this.jwtService.signAsync({id}, {
+        expiresIn: '30m'
+      }),
+      refresh_token: await this.jwtService.signAsync({id}, {
+        expiresIn: '30d'
+      }),
     }
   }
 }
