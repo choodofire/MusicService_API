@@ -1,9 +1,9 @@
 import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
-import {RegisterDto} from "./auth.controller";
 import {UserRepository} from "../user/repositories/user.repository";
 import {UserEntity} from "../user/entities/user.entity";
 import {UserRole} from "@music_service_api/interfaces";
 import {JwtService} from "@nestjs/jwt";
+import {AccountLogin, AccountRegister} from "@music_service_api/contracts";
 
 @Injectable()
 export class AuthService {
@@ -12,7 +12,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async register({ email, username, displayName, password }: RegisterDto) {
+  async register({ email, username, displayName, password }: AccountRegister.Request): Promise<AccountRegister.Response> {
     const oldUser = await this.userRepository.findUserByEmail(email);
     if (oldUser) {
       throw new HttpException(
@@ -48,7 +48,7 @@ export class AuthService {
     return { id: user.id }
   }
 
-  async login(id: number) {
+  async login(id: number): Promise<AccountLogin.Response> {
     return {
       access_token: await this.jwtService.signAsync({id}, {
         expiresIn: '30m'

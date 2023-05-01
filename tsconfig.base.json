@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@music_service_api/contracts": ["libs/contracts/src/index.ts"],
       "@music_service_api/interfaces": ["libs/interfaces/src/index.ts"]
     }
   },
