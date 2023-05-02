@@ -3,7 +3,7 @@ import {AuthService} from "./auth.service";
 import {AccountLogin, AccountRegister} from "@music_service_api/contracts";
 import {RMQRoute, RMQValidate} from "nestjs-rmq";
 
-@Controller('auth')
+@Controller()
 export class AuthController {
   constructor(
     private readonly authService: AuthService
