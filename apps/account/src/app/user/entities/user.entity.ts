@@ -1,4 +1,4 @@
-import {IUser, UserRole} from "@music_service_api/interfaces";
+import {IUser, IUserPlaylists, UserRole} from "@music_service_api/interfaces";
 import {compare, genSalt, hash} from "bcryptjs";
 
 export class UserEntity implements IUser {
@@ -6,8 +6,9 @@ export class UserEntity implements IUser {
   email: string;
   username: string;
   passwordHash: string;
-  displayName: string;
+  displayName?: string;
   role: UserRole;
+  playlists?: IUserPlaylists[];
 
   constructor(user: IUser) {
     this.id = user.id;
@@ -16,6 +17,16 @@ export class UserEntity implements IUser {
     this.username = user.username;
     this.displayName = user.displayName;
     this.role = user.role;
+    this.playlists = user.playlists;
+  }
+
+  public getPublicProfile() {
+    return {
+      email: this.email,
+      username: this.username,
+      role: this.role,
+      displayName: this.displayName,
+    }
   }
 
   public async setPassword(password: string) {
@@ -27,4 +38,10 @@ export class UserEntity implements IUser {
   public validatePassword(password: string) {
     return compare(password, this.passwordHash);
   }
+
+  public updateProfile(displayName: string) {
+    this.displayName = displayName;
+    return this;
+  }
+
 }

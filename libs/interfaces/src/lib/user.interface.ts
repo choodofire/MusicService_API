@@ -5,11 +5,23 @@ export enum UserRole {
   Admin = 'Admin'
 }
 
+export enum PlaylistAccess {
+  Public = 'Public',
+  Private = 'Private',
+  FriendsOnly = 'FriendsOnly'
+}
+
 export interface IUser {
   id?: number;
   username: string;
   displayName?: string;
   email: string;
   passwordHash: string;
-  role: UserRole
+  role: UserRole;
+  playlists?: IUserPlaylists[];
+}
+
+export interface IUserPlaylists {
+  playlistId: number;
+  playlistAccess: PlaylistAccess;
 }

@@ -14,8 +14,21 @@ export class UserRepository {
     return newUser;
   }
 
+  async updateUser({id, ...rest}: UserEntity) {
+    const fieldsToUpdate = Object.keys(rest);
+    const updateValues = {};
+    fieldsToUpdate.forEach(field => {
+      updateValues[field] = rest[field];
+    });
+    return this.userModel.update(updateValues,{where: {id}});
+  }
+
   async findUserByEmail(email: string) {
     return this.userModel.findOne({where: { email }});
+  }
+
+  async findUserById(id: number) {
+    return this.userModel.findByPk(id);
   }
 
   async deleteUserByEmail(email: string) {

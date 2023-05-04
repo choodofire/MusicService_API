@@ -29,7 +29,17 @@ Visit the [Nx Documentation](https://nx.dev) to learn more.
 # rabbiMQ only
 $ docker-compose -f docker-compose-rabbitmq-only.yml up
 
+```
 
-nx run-many --target=serve --all --parallel=10
+## Running the app
 
+```bash
+# api
+$ nx serve api
+
+# accounts
+$ nx serve account
+
+# All services
+$ nx run-many --target=serve --all --parallel=10
 ```
