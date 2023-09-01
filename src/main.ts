@@ -15,9 +15,7 @@ async function start() {
 
   const config = new DocumentBuilder()
     .setTitle('Music-streaming-service')
-    .setDescription(
-      'Документация REST API для музыкального стримингового сервиса',
-    )
+    .setDescription('Documentation of REST API for music streaming service')
     .setVersion('1.0.0')
     .addTag('Vyacheslav Gordeev')
     .build();

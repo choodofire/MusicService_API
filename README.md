@@ -1,6 +1,11 @@
-# Музыкальный стриминговый сервис
+# MusicService_API
 
-Если вы захотите послушать музыку или продвигать своё творчество, приходите к нам и у вас всё получится
+The backend part of music streaming service application.
+
+NestJS + TypeScript framework, PostgreSQL database, sending email notifications using "nodemailer".
+
+
+API created with swagger on endpoint "/api/docs".
 
 ## Installation
 
